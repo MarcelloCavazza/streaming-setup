@@ -9,4 +9,7 @@ public class Response
 
     [JsonPropertyName("id")]
     public required string Id { get; set; }
+
+    [JsonPropertyName("fetch_more")]
+    public required bool FetchMore { get; set; }
 }

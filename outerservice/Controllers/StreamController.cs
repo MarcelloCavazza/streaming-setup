@@ -23,7 +23,8 @@ public class StreamController : ControllerBase
             var json = JsonSerializer.Serialize(new Response()
             {
                 Id = Guid.NewGuid().ToString(),
-                Content = RandomStringGenerator.Generate()
+                Content = RandomStringGenerator.Generate(),
+                FetchMore = i != 1000
             }) + "\n"; // NDJSON: newline after each object
 
             var bytes = Encoding.UTF8.GetBytes(json);
@@ -31,7 +32,7 @@ public class StreamController : ControllerBase
             await Response.Body.WriteAsync(bytes, 0, bytes.Length);
             await Response.Body.FlushAsync();
 
-            await Task.Delay(200);
+            await Task.Delay(100);
         }
 
     }
