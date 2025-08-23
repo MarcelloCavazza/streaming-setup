@@ -1,19 +1,61 @@
 {
     "version": "2.0.0",
     "tasks": [
-        {
-            "label": "Run outerservice WebAPI",
-            "type": "shell",
-            "command": "dotnet run --project outerservice --urls=http://localhost:5050",
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "presentation": {
-                "reveal": "always",
-                "panel": "dedicated"
-            },
-            "problemMatcher": []
-        }
-    ]
+		{
+			"label": "Run outerservice WebAPI",
+			"type": "shell",
+			"command": "dotnet run --project outerservice --urls=http://localhost:5050",
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"presentation": {
+				"reveal": "always",
+				"panel": "dedicated"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Run innerservice WebAPI",
+			"type": "shell",
+			"command": "dotnet run --project innerservice --urls=http://localhost:5051",
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"presentation": {
+				"reveal": "always",
+				"panel": "dedicated"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "build innerservice",
+			"type": "shell",
+			"command": "dotnet build innerservice",
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"presentation": {
+				"reveal": "always",
+				"panel": "dedicated"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "build outerservice",
+			"type": "shell",
+			"command": "dotnet build outerservice",
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"presentation": {
+				"reveal": "always",
+				"panel": "dedicated"
+			},
+			"problemMatcher": []
+		}
+	]
 }

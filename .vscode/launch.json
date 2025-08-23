@@ -1,0 +1,24 @@
+// filepath: /home/marcello/repos/streaming-setup/.vscode/launch.json
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug innerservice WebAPI",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build innerservice",
+            "program": "${workspaceFolder}/innerservice/bin/Debug/net8.0/innerservice.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/innerservice",
+            "stopAtEntry": false,
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+            },
+            "env": {
+                "ASPNETCORE_URLS": "http://localhost:5051"
+            },
+            "console": "internalConsole"
+        }
+    ]
+}

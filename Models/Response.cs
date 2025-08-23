@@ -1,6 +1,6 @@
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
-namespace outerservice.Models;
+namespace Models;
 
 public class Response
 {

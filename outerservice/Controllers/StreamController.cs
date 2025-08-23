@@ -2,8 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Models;
 
-using outerservice.Models;
 using outerservice.Extensions;
 
 namespace outerservice.Controllers;
@@ -18,7 +18,7 @@ public class StreamController : ControllerBase
     {
         Response.ContentType = "application/x-ndjson";
 
-        for (int i = 1; i <= 10; i++)
+        for (int i = 1; i <= 1000; i++)
         {
             var json = JsonSerializer.Serialize(new Response()
             {
