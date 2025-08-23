@@ -28,7 +28,7 @@ public class StreamController : ControllerBase
 
             var bytes = Encoding.UTF8.GetBytes(json);
 
-            await Response.Body.WriteAsync(bytes, 0, bytes.Length);
+            await Response.Body.WriteAsync(bytes);
             await Response.Body.FlushAsync();
 
             await Task.Delay(100);
