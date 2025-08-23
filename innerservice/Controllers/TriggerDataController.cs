@@ -6,11 +6,11 @@ namespace innerservice.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class ResponseController : ControllerBase
+    public class TriggerDataController : ControllerBase
     {
         private readonly IOutterServiceBL _outterServiceBL;
 
-        public ResponseController(IOutterServiceBL outterservicebl)
+        public TriggerDataController(IOutterServiceBL outterservicebl)
         {
             _outterServiceBL = outterservicebl;
         }
