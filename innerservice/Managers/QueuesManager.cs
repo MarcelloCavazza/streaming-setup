@@ -20,18 +20,26 @@ namespace innerservice.Managers
 
             queuesDict.TryAdd(@object.QueueGUID, newQueue);
         }
-        
+
+        public Queue<PartialContentResponse>? GetQueue(string queueId)
+        {
+            queuesDict.TryGetValue(queueId, out var queue);
+            return queue;
+        }
+
         public void EnqueuePartialContent(PartialContentResponse partialContent)
         {
-            if (!queuesDict.ContainsKey(partialContent.QueueGUID))
+            if (queuesDict.TryGetValue(partialContent.QueueGUID, out var queue))
+            {
+                lock (queue)
+                {
+                    queue.Enqueue(partialContent);
+                }
+            }
+            else
             {
                 RegisterQueue(partialContent);
             }
-
-
-
-
         }
-        
     }
 }

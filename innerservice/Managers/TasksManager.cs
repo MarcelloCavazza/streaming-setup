@@ -3,15 +3,8 @@ using innerservice.Managers.Interfaces;
 
 namespace innerservice.Managers
 {
-    public class TasksManager
+    public class TasksManager : ITasksManager
     { 
-        private readonly IQueuesManager _queuesManager;
-
-        public TasksManager(IQueuesManager queuesManager)
-        {
-            _queuesManager = queuesManager;
-        }
-
         private readonly ConcurrentDictionary<Guid, (Task Task, CancellationTokenSource Cts)> _tasks = new();
 
         public Guid StartTask(Func<CancellationToken, Guid, Task> work)
@@ -24,7 +17,7 @@ namespace innerservice.Managers
             _tasks[id] = (task, cts);
 
             // Remove task from dictionary when completed
-            _ = task.ContinueWith(_ => _tasks.TryRemove(id, out (Task, CancellationTokenSource) _));
+            _ = task.ContinueWith(_ => _tasks.TryRemove(id, out var _));
 
             return id;
         }
@@ -34,7 +27,6 @@ namespace innerservice.Managers
             if (_tasks.TryGetValue(id, out var entry))
             {
                 entry.Cts.Cancel();
-                _queuesManager.RemoveQueue(id.ToString());
                 return true;
             }
             return false;

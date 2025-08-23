@@ -18,58 +18,50 @@ namespace innerservice.BLs
 
         public Guid ExecuteCall()
         {
-            var id = _tasksManager.StartTask(async (taskToken, id) =>
-            {
-                await ExecuteCallAsync(taskToken, id);
-            });
+            var id = _tasksManager.StartTask(ExecuteCallAsync);
             
             return id;
         }
 
         private async Task ExecuteCallAsync(CancellationToken taskToken, Guid queueId)
         {
-            taskToken.ThrowIfCancellationRequested();
-            var url = "http://127.0.0.1:5050/stream";
-
-            var contents = new List<string>();
-
-            using var httpClient = new HttpClient();
-            var request = new HttpRequestMessage(HttpMethod.Post, url);
-
-            using var response = await httpClient.SendAsync(
-                request,
-                HttpCompletionOption.ResponseHeadersRead,
-                CancellationToken.None
-            );
-
-            taskToken.ThrowIfCancellationRequested();
-
-            response.EnsureSuccessStatusCode();
-
-            using var stream = await response.Content.ReadAsStreamAsync();
-            using var reader = new System.IO.StreamReader(stream);
-
-            var startTime = DateTime.Now;
-            var endTime = startTime.AddSeconds(1);
-
-            while (!reader.EndOfStream)
+            try
             {
                 taskToken.ThrowIfCancellationRequested();
-                var line = await reader.ReadLineAsync();
-                    var payload = JsonSerializer.Deserialize<Response>(line ?? "");
-                if (payload != null)
-                {
-                    contents.Add(payload.Content ?? "");
+                var url = "http://127.0.0.1:5050/stream";
 
-                    if (DateTime.Now >= endTime)
+                var contents = new List<string>();
+
+                using var httpClient = new HttpClient();
+                var request = new HttpRequestMessage(HttpMethod.Post, url);
+
+                using var response = await httpClient.SendAsync(
+                    request,
+                    HttpCompletionOption.ResponseHeadersRead,
+                    CancellationToken.None
+                );
+
+                taskToken.ThrowIfCancellationRequested();
+
+                response.EnsureSuccessStatusCode();
+
+                using var stream = await response.Content.ReadAsStreamAsync();
+                using var reader = new StreamReader(stream);
+
+                while (!reader.EndOfStream)
+                {
+                    taskToken.ThrowIfCancellationRequested();
+                    var line = await reader.ReadLineAsync();
+                    var payload = JsonSerializer.Deserialize<Response>(line ?? "");
+
+                    if (payload != null)
                     {
-                        startTime = DateTime.Now;
-                        endTime = startTime.AddSeconds(1);
+                        contents.Add(payload.Content ?? "");
 
                         var partialContent = new PartialContentResponse()
                         {
                             QueueGUID = queueId.ToString(),
-                            PartialContent = String.Join("\n", contents),
+                            PartialContent = string.Join("\n", contents),
                             FetchMore = payload.FetchMore
                         };
 
@@ -77,21 +69,25 @@ namespace innerservice.BLs
                         _queuesManager.EnqueuePartialContent(partialContent);
                         contents.Clear();
                     }
+
                 }
 
-            }
-
-            if (contents.Count > 0)
-            {
-                var partialContent = new PartialContentResponse()
+                if (contents.Count > 0)
                 {
-                    QueueGUID = queueId.ToString(),
-                    PartialContent = String.Join("\n", contents),
-                    FetchMore = false
-                };
+                    var partialContent = new PartialContentResponse()
+                    {
+                        QueueGUID = queueId.ToString(),
+                        PartialContent = String.Join("\n", contents),
+                        FetchMore = false
+                    };
 
-                taskToken.ThrowIfCancellationRequested();
-                _queuesManager.EnqueuePartialContent(partialContent);
+                    taskToken.ThrowIfCancellationRequested();
+                    _queuesManager.EnqueuePartialContent(partialContent);
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                _queuesManager.RemoveQueue(queueId.ToString());
             }
         }
     }
