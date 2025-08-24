@@ -1,6 +1,6 @@
 # Streaming Setup
 
-## Entities
+## Entities / Context
 
 - **Client**: Wants data at the moment of his request
 
