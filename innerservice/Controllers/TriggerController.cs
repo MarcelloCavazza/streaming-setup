@@ -1,16 +1,16 @@
 using Microsoft.AspNetCore.Mvc;
 using innerservice.BLs.Interfaces;
-using Models;
+using Models.InnerService;
 
 namespace innerservice.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class TriggerDataController : ControllerBase
+    public class TriggerController : ControllerBase
     {
         private readonly IOutterServiceBL _outterServiceBL;
 
-        public TriggerDataController(IOutterServiceBL outterservicebl)
+        public TriggerController(IOutterServiceBL outterservicebl)
         {
             _outterServiceBL = outterservicebl;
         }
@@ -20,7 +20,7 @@ namespace innerservice.Controllers
         {
             var id = _outterServiceBL.ExecuteCall();
 
-            return await Task.FromResult(Ok(new TrigerredResult()
+            return await Task.FromResult(Ok(new TriggerResponse()
             {
                 Id = id.ToString()
             }));
