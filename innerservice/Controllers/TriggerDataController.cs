@@ -15,7 +15,7 @@ namespace innerservice.Controllers
             _outterServiceBL = outterservicebl;
         }
 
-        [HttpPost]
+        [HttpGet]
         public async Task<IActionResult> TriggerIncommingDataAsync()
         {
             var id = _outterServiceBL.ExecuteCall();

@@ -16,7 +16,20 @@ builder.Services
     .AddSingleton<IQueuesManager, QueuesManager>()
     .AddScoped<IOutterServiceBL, OutterServiceBL>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy
+            .AllowAnyOrigin()
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
 var app = builder.Build();
+
+app.UseCors();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

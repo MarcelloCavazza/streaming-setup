@@ -44,7 +44,10 @@ namespace innerservice.Controllers
 
             _tasksManager.TryGetStatus(guid, out var status);
             _logger.LogInformation("Status retrieved for task: {Id}", id);
-            return Ok(status);
+            return Ok(new StatusResponse()
+            {
+                Status = status
+            });
         }
 
         [HttpDelete("{id}")]

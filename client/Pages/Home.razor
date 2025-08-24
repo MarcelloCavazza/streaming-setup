@@ -1,7 +1,131 @@
-﻿@page "/"
+﻿@using Models
+@using System.Text.Json
+@inject HttpClient Http
+
+@page "/"
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<h1>Mongol History in Brazilian Portuguese</h1>
 
-Welcome to your new app.
+<p><em>RequestStatus: @RequestStatus</em></p>
+
+<br>
+
+@if(CanStartRequest)
+{
+    <div>
+        <button style="background-color: rgb(0, 255, 0)  ; color: red;" onclick="@(async () => await StartRequestAsync())">
+        Start Request
+        </button>
+    </div>
+}
+else
+{
+    <div>
+        <button style="background-color: red; color: white;" onclick="@(async () => await CancelRequestAsync())">
+            Cancel Request
+        </button>
+    </div>
+}
+<br>
+
+@if (!CanStartRequest && (mongolHistory == string.Empty || requestAgain || queueId == string.Empty))
+{
+    <p><em>Loading...</em></p>
+}
+
+<br>
+
+
+<div>@mongolHistory</div>
+
+@code {
+
+    private bool CanStartRequest = true;
+
+    private string mongolHistory = string.Empty;
+
+    private bool requestAgain = false;
+
+    private string queueId = string.Empty;
+
+    private string RequestStatus = "Not Made";
+
+    private const string API_URL = "http://localhost:5051";
+
+    public async Task StartRequestAsync()
+    {
+        CanStartRequest = false;
+
+        await Task.Delay(2000);
+
+        var responseMessage = await Http.GetAsync($"{API_URL}/triggerdata");
+
+        responseMessage.EnsureSuccessStatusCode();
+
+        var responseAsString = await responseMessage.Content.ReadAsStringAsync();
+
+        var responseAsObject = JsonSerializer.Deserialize<TrigerredResult>(responseAsString);
+
+        if (responseAsObject != null)
+        {
+            queueId = responseAsObject.Id;
+
+            do{
+                await RetrieveTaskStatusAsync();
+
+                if (queueId != null)
+                {
+                    var innerServiceResponse = await Http.GetAsync($"{API_URL}/queue?id={queueId}");
+
+                    if (!innerServiceResponse.IsSuccessStatusCode)
+                    {
+                        break;
+                    }
+
+                    innerServiceResponse.EnsureSuccessStatusCode();
+
+                    var innerServiceResponseString = await innerServiceResponse.Content.ReadAsStringAsync();
+
+                    var innerServiceResponseAsObject = JsonSerializer.Deserialize<FinalResponse>(innerServiceResponseString);
+
+
+                    if (innerServiceResponseAsObject != null)
+                    {
+                        requestAgain = innerServiceResponseAsObject.FetchMore;
+
+                        mongolHistory += innerServiceResponseAsObject.Content;
+
+                        queueId = innerServiceResponseAsObject.QueueId;
+                        
+                        StateHasChanged();
+                    }
+                }
+            }while(requestAgain);
+        }
+
+    }
+
+    private async Task RetrieveTaskStatusAsync()
+    {
+        var requestStatusResponse = await Http.GetAsync($"{API_URL}/tasks/{queueId}");
+
+        requestStatusResponse.EnsureSuccessStatusCode();
+
+        var responseAsString = await requestStatusResponse.Content.ReadAsStringAsync();
+
+        var responseAsObject = JsonSerializer.Deserialize<StatusResponse>(responseAsString);
+
+        RequestStatus = responseAsObject.Status;
+    }
+
+    public async Task CancelRequestAsync()
+    {
+        requestAgain = false;
+        
+        await Http.DeleteAsync($"{API_URL}/tasks/{queueId}");
+
+        await RetrieveTaskStatusAsync();
+    }
+}
