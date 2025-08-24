@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using innerservice.Managers.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Models;
 using System;
 using System.Collections.Generic;
@@ -14,20 +15,55 @@ namespace innerservice.Controllers
     {
         private readonly IQueuesManager _queuesManager;
 
+        private readonly ITasksManager _tasksManager;
+
         private readonly ILogger<QueuesController> _logger;
 
-        public QueuesController(IQueuesManager queuesManager, ILogger<QueuesController> logger)
+        public QueuesController(IQueuesManager queuesManager, ITasksManager tasksManager, ILogger<QueuesController> logger)
         {
             _queuesManager = queuesManager;
+            _tasksManager = tasksManager;
             _logger = logger;
         }
+
+        [HttpDelete("{id}")]
+        public IActionResult RemoveQueue([FromRoute] string id)
+        {
+
+            if (!Guid.TryParse(id, out var guid))
+            {
+                _logger.LogWarning("Invalid GUID input for removal: {Id}", id);
+                return BadRequest("incorrent input");
+            }
+
+            var result = _tasksManager.TryCancelTask(guid);
+
+            if (result)
+            {
+                var queueRemovalResult = _queuesManager.RemoveQueue(guid);
+                if (queueRemovalResult)
+                {
+                    return Ok();
+                }
+
+                return Problem(statusCode: 500, detail: "Could not remove Queue");
+            }
+
+            return Problem(statusCode: 500, detail: "Could not cancel Task");
+        }
+
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetQueue([FromRoute] string id)
         {
             await Task.Delay(1000);
 
-            var queue = _queuesManager.GetQueue(id);
+            if (!Guid.TryParse(id, out var guid))
+            {
+                return BadRequest("Invalid id provided");
+            }
+
+            var queue = _queuesManager.GetQueue(guid);
 
             _logger.LogTrace("Queue found {Object}", queue);
 
@@ -53,14 +89,14 @@ namespace innerservice.Controllers
 
             if (!fetchMore)
             {
-                _queuesManager.RemoveQueue(id);
+                _queuesManager.RemoveQueue(guid);
             }
 
             return Ok(new FinalResponse()
             {
                 Content = finalContent.ToString(),
                 FetchMore = fetchMore,
-                QueueId = id
+                QueueId = guid
             });
         }
     }

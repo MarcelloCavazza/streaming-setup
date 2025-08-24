@@ -8,23 +8,28 @@ namespace innerservice.Managers
     public class QueuesManager : IQueuesManager
     {
         private readonly ILogger<QueuesManager> _logger;
-        private ConcurrentDictionary<string, Queue<PartialContentResponse>> queuesDict = new ConcurrentDictionary<string, Queue<PartialContentResponse>>();
+        private ConcurrentDictionary<Guid, Queue<PartialContentResponse>> queuesDict = new ConcurrentDictionary<Guid, Queue<PartialContentResponse>>();
 
         public QueuesManager(ILogger<QueuesManager> logger)
         {
             _logger = logger;
         }
 
-        public void RemoveQueue(string key)
+        public bool RemoveQueue(Guid key)
         {
+            var success = false;
+
             if (queuesDict.TryRemove(key, out _))
             {
                 _logger.LogInformation("Queue removed: {Key}", key);
+                success = true;
             }
             else
             {
-                _logger.LogWarning("Attempted to remove non-existent queue: {Key}", key);
+                _logger.LogWarning("Could not remove queue: {Key}", key);
             }
+
+            return success;
         }
 
         public void RegisterQueue(PartialContentResponse @object)
@@ -42,7 +47,7 @@ namespace innerservice.Managers
             }
         }
 
-        public Queue<PartialContentResponse>? GetQueue(string queueId)
+        public Queue<PartialContentResponse>? GetQueue(Guid queueId)
         {
             if (queuesDict.TryGetValue(queueId, out var queue))
             {

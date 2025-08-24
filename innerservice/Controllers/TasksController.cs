@@ -65,7 +65,9 @@ namespace innerservice.Controllers
                 _logger.LogWarning("Cancel failed for task: {Id}", id);
                 return NotFound();
             }
-            _queuesManager.RemoveQueue(id);
+
+            _queuesManager.RemoveQueue(guid);
+
             _logger.LogInformation("Task cancelled: {Id}", id);
             return Ok();
         }

@@ -8,6 +8,8 @@ deleteFolders() {
 cd client && deleteFolders
 cd ../innerservice && deleteFolders
 cd ../outerservice && deleteFolders
+cd ../Extensions && deleteFolders
+cd ../Models && deleteFolders
 
 cd ..
 

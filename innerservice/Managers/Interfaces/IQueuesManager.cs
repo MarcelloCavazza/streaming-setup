@@ -4,10 +4,10 @@ namespace innerservice.Managers.Interfaces
 {
     public interface IQueuesManager
     {
-        void RemoveQueue(string key);
+        bool RemoveQueue(Guid key);
 
         void EnqueuePartialContent(PartialContentResponse partialContent);
 
-        Queue<PartialContentResponse>? GetQueue(string queueId);
+        Queue<PartialContentResponse>? GetQueue(Guid queueId);
     }
 }

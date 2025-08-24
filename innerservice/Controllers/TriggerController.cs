@@ -22,7 +22,7 @@ namespace innerservice.Controllers
 
             return await Task.FromResult(Ok(new TriggerResponse()
             {
-                Id = id.ToString()
+                Id = id
             }));
         }
 

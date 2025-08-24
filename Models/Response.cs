@@ -8,7 +8,7 @@ public class Response
     public string? Content { get; set; }
 
     [JsonPropertyName("id")]
-    public required string Id { get; set; }
+    public required Guid Id { get; set; }
 
     [JsonPropertyName("fetch_more")]
     public required bool FetchMore { get; set; }

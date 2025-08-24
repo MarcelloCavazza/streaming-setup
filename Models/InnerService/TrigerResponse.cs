@@ -1,8 +1,9 @@
 using System.Text.Json.Serialization;
+using Extensions;
 
 namespace Models.InnerService;
 public class TriggerResponse
 {
-    [JsonPropertyName("id")]
-    public string Id {get; set;}
+    [JsonPropertyName("id"), JsonConverter(typeof(GuidStringConverter))]
+    public Guid Id {get; set;}
 }

@@ -60,7 +60,7 @@ namespace innerservice.BLs
 
                         var partialContent = new PartialContentResponse()
                         {
-                            QueueGUID = queueId.ToString(),
+                            QueueGUID = queueId,
                             PartialContent = string.Join("\n", contents),
                             FetchMore = payload.FetchMore
                         };
@@ -73,7 +73,7 @@ namespace innerservice.BLs
             }
             catch (OperationCanceledException)
             {
-                _queuesManager.RemoveQueue(queueId.ToString());
+                _queuesManager.RemoveQueue(queueId);
             }
         }
     }

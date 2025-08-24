@@ -40,7 +40,7 @@ public class StreamController : ControllerBase
 
             var json = JsonSerializer.Serialize(new Response()
             {
-                Id = Guid.NewGuid().ToString(),
+                Id = Guid.NewGuid(),
                 Content = chunk,
                 FetchMore = position + chunkSize < totalLength
             }) + "\n";

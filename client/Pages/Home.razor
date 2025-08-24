@@ -31,7 +31,7 @@ else
 }
 <br>
 
-@if (!CanStartRequest && (mongolHistory == string.Empty || requestAgain || queueId == string.Empty))
+@if (!CanStartRequest && (mongolHistory == string.Empty || requestAgain || queueId == Guid.Empty))
 {
     <p><em>Loading...</em></p>
 }
@@ -49,7 +49,7 @@ else
 
     private bool requestAgain = false;
 
-    private string queueId = string.Empty;
+    private Guid queueId = Guid.Empty;
 
     private string RequestStatus = "Not Made";
 
@@ -58,10 +58,11 @@ else
     public async Task StartRequestAsync()
     {
         CanStartRequest = false;
+        mongolHistory = string.Empty;
 
         await Task.Delay(2000);
 
-        var responseMessage = await Http.GetAsync($"{API_URL}/triggerdata");
+        var responseMessage = await Http.GetAsync($"{API_URL}/trigger");
 
         responseMessage.EnsureSuccessStatusCode();
 
@@ -76,9 +77,9 @@ else
             do{
                 await RetrieveTaskStatusAsync();
 
-                if (queueId != null)
+                if (queueId != Guid.Empty)
                 {
-                    var innerServiceResponse = await Http.GetAsync($"{API_URL}/queue?id={queueId}");
+                    var innerServiceResponse = await Http.GetAsync($"{API_URL}/queues/{queueId}");
 
                     if (!innerServiceResponse.IsSuccessStatusCode)
                     {
@@ -126,11 +127,11 @@ else
         requestAgain = false;
         
         CanStartRequest = true;
-
-        mongolHistory = string.Empty;
         
         await Http.DeleteAsync($"{API_URL}/tasks/{queueId}");
 
         await RetrieveTaskStatusAsync();
+
+        queueId = Guid.Empty;
     }
 }
