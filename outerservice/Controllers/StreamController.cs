@@ -13,6 +13,7 @@ namespace outerservice.Controllers;
 public class StreamController : ControllerBase
 {
     private readonly ILogger<StreamController> _logger;
+    private readonly Random _random = new Random();
 
     public StreamController(ILogger<StreamController> logger)
     {
@@ -29,7 +30,7 @@ public class StreamController : ControllerBase
 
         while (position < totalLength)
         {
-            int chunkSize = new Random().Next(1, 6);
+            int chunkSize = _random.Next(1, 6);
             if (position + chunkSize > totalLength)
                 chunkSize = totalLength - position;
 
