@@ -4,6 +4,7 @@ using Models;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Text;
 
 namespace innerservice.Controllers
 {
@@ -13,18 +14,22 @@ namespace innerservice.Controllers
     {
         private readonly IQueuesManager _queuesManager;
 
-        public QueueController(IQueuesManager queuesManager)
+        private readonly ILogger<QueueController> _logger;
+
+        public QueueController(IQueuesManager queuesManager, ILogger<QueueController> logger)
         {
             _queuesManager = queuesManager;
+            _logger = logger;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetQueue([FromQuery] string id)
         {
-            await Task.Delay(1000); // 1 second delay at the beginning
+            await Task.Delay(1000);
 
-            // Try to get the queue from the manager
             var queue = _queuesManager.GetQueue(id);
+
+            _logger.LogTrace("Queue found {Object}", queue);
 
             if (queue == null)
             {
@@ -32,13 +37,31 @@ namespace innerservice.Controllers
             }
 
             // Return all values from the queue
-            var values = new List<PartialContentResponse>();
+            var finalContent = new StringBuilder();
+            var fetchMore = false;
+
             lock (queue)
             {
-                values.AddRange(queue);
+                while (queue.Count != 0)
+                {
+                    var partialContent = queue.Dequeue();
+
+                    finalContent.Append(partialContent.PartialContent);
+                    fetchMore = partialContent.FetchMore;
+                }
             }
 
-            return Ok(values);
+            if (!fetchMore)
+            {
+                _queuesManager.RemoveQueue(id);
+            }
+
+            return Ok(new FinalResponse()
+            {
+                Content = finalContent.ToString(),
+                FetchMore = fetchMore,
+                QueueId = id
+            });
         }
     }
 }

@@ -69,20 +69,6 @@ namespace innerservice.BLs
                         _queuesManager.EnqueuePartialContent(partialContent);
                         contents.Clear();
                     }
-
-                }
-
-                if (contents.Count > 0)
-                {
-                    var partialContent = new PartialContentResponse()
-                    {
-                        QueueGUID = queueId.ToString(),
-                        PartialContent = String.Join("\n", contents),
-                        FetchMore = false
-                    };
-
-                    taskToken.ThrowIfCancellationRequested();
-                    _queuesManager.EnqueuePartialContent(partialContent);
                 }
             }
             catch (OperationCanceledException)

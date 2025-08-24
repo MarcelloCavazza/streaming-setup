@@ -1,10 +1,20 @@
+using innerservice.BLs;
+using innerservice.BLs.Interfaces;
+using innerservice.Managers;
+using innerservice.Managers.Interfaces;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddControllers();
-builder.Services.AddSwaggerGen();
+
+builder.Services
+    .AddSwaggerGen()
+    .AddSingleton<ITasksManager, TasksManager>()
+    .AddSingleton<IQueuesManager, QueuesManager>()
+    .AddScoped<IOutterServiceBL, OutterServiceBL>();
 
 var app = builder.Build();
 
