@@ -1,10 +1,7 @@
 namespace outerservice.Extensions;
 
-public static class RandomStringGenerator
+public static class Constants
 {
-    private static readonly Random _random = new Random();
-    private const string _chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-
     public const string MOCK_RESPONSE = @"
     Os mongóis foram um povo nômade originário das estepes da Ásia Central. Viviam principalmente na região da atual Mongólia, marcada por planícies abertas, poucas montanhas e um clima extremo com verões curtos e invernos muito rigorosos.
 A sociedade mongol era tradicionalmente organizada em clãs e tribos. Cada grupo possuía um chefe ou líder, e a lealdade era dirigida à família extensa. A estrutura era descentralizada, o que dificultava a unidade política entre eles.

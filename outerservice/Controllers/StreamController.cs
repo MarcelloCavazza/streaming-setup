@@ -24,9 +24,8 @@ public class StreamController : ControllerBase
     {
         Response.ContentType = "application/x-ndjson";
 
-        string bigText = RandomStringGenerator.MOCK_RESPONSE;
         int position = 0;
-        int totalLength = bigText.Length;
+        int totalLength = Constants.MOCK_RESPONSE.Length;
 
         while (position < totalLength)
         {
@@ -34,7 +33,7 @@ public class StreamController : ControllerBase
             if (position + chunkSize > totalLength)
                 chunkSize = totalLength - position;
 
-            string chunk = bigText.Substring(position, chunkSize);
+            string chunk = Constants.MOCK_RESPONSE.Substring(position, chunkSize);
 
             _logger.LogInformation("Sending chunk: {Chunk}", chunk);
 
