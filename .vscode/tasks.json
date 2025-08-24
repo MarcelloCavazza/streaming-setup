@@ -56,6 +56,20 @@
 				"panel": "dedicated"
 			},
 			"problemMatcher": []
+		},
+		{
+			"label": "Run wasm",
+			"type": "shell",
+			"command": "dotnet run --project client --urls=http://localhost:5052",
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"presentation": {
+				"reveal": "always",
+				"panel": "dedicated"
+			},
+			"problemMatcher": []
 		}
 	]
 }
