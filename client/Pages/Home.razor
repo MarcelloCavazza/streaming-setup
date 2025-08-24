@@ -119,7 +119,7 @@ else
 
         var responseAsObject = JsonSerializer.Deserialize<StatusResponse>(responseAsString);
 
-        RequestStatus = responseAsObject.Status;
+        RequestStatus = responseAsObject!.Status;
     }
 
     public async Task CancelRequestAsync()

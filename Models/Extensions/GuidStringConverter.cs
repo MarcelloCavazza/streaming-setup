@@ -2,7 +2,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Extensions;
+namespace Models.Extensions;
 
 public class GuidStringConverter : JsonConverter<Guid>
 {

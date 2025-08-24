@@ -1,5 +1,5 @@
 using System.Text.Json.Serialization;
-using Extensions;
+using Models.Extensions;
 
 namespace Models.InnerService;
 public class TriggerResponse
