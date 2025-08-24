@@ -1,5 +1,8 @@
 ﻿@using Models
-@using Models.InnerService
+@using Models.InnerService.Responses
+@using Models.InnerService.Responses.Queues
+@using Models.InnerService.Responses.Tasks
+@using Models.InnerService.Responses.Trigger
 @using System.Text.Json
 @inject HttpClient Http
 
@@ -90,7 +93,7 @@ else
 
                     var innerServiceResponseString = await innerServiceResponse.Content.ReadAsStringAsync();
 
-                    var innerServiceResponseAsObject = JsonSerializer.Deserialize<FinalResponse>(innerServiceResponseString);
+                    var innerServiceResponseAsObject = JsonSerializer.Deserialize<QueueContent>(innerServiceResponseString);
 
 
                     if (innerServiceResponseAsObject != null)
@@ -111,15 +114,15 @@ else
 
     private async Task RetrieveTaskStatusAsync()
     {
-        var requestStatusResponse = await Http.GetAsync($"{API_URL}/tasks/{queueId}");
+        var requestTaskStatusResponse = await Http.GetAsync($"{API_URL}/tasks/{queueId}");
 
-        requestStatusResponse.EnsureSuccessStatusCode();
+        requestTaskStatusResponse.EnsureSuccessStatusCode();
 
-        var responseAsString = await requestStatusResponse.Content.ReadAsStringAsync();
+        var responseAsString = await requestTaskStatusResponse.Content.ReadAsStringAsync();
 
-        var responseAsObject = JsonSerializer.Deserialize<StatusResponse>(responseAsString);
+        var responseAsObject = JsonSerializer.Deserialize<TaskStatusResponse>(responseAsString);
 
-        RequestStatus = responseAsObject!.Status;
+        RequestStatus = responseAsObject!.Status.ToString();
     }
 
     public async Task CancelRequestAsync()

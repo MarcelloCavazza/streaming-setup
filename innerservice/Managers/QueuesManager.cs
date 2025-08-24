@@ -1,4 +1,4 @@
-using Models;
+using Models.InnerService.Responses.Queues;
 using innerservice.Managers.Interfaces;
 using System.Collections.Concurrent;
 using Microsoft.Extensions.Logging;
@@ -8,7 +8,7 @@ namespace innerservice.Managers
     public class QueuesManager : IQueuesManager
     {
         private readonly ILogger<QueuesManager> _logger;
-        private ConcurrentDictionary<Guid, Queue<PartialContentResponse>> queuesDict = new ConcurrentDictionary<Guid, Queue<PartialContentResponse>>();
+        private ConcurrentDictionary<Guid, Queue<QueueContent>> queuesDict = new ConcurrentDictionary<Guid, Queue<QueueContent>>();
 
         public QueuesManager(ILogger<QueuesManager> logger)
         {
@@ -32,22 +32,22 @@ namespace innerservice.Managers
             return success;
         }
 
-        public void RegisterQueue(PartialContentResponse @object)
+        public void RegisterQueue(QueueContent @object)
         {
-            var newQueue = new Queue<PartialContentResponse>();
+            var newQueue = new Queue<QueueContent>();
             newQueue.Enqueue(@object);
 
-            if (queuesDict.TryAdd(@object.QueueGUID, newQueue))
+            if (queuesDict.TryAdd(@object.QueueId, newQueue))
             {
-                _logger.LogInformation("Queue registered: {QueueGUID}", @object.QueueGUID);
+                _logger.LogInformation("Queue registered: {QueueId}", @object.QueueId);
             }
             else
             {
-                _logger.LogWarning("Queue registration failed: {QueueGUID}", @object.QueueGUID);
+                _logger.LogWarning("Queue registration failed: {QueueId}", @object.QueueId);
             }
         }
 
-        public Queue<PartialContentResponse>? GetQueue(Guid queueId)
+        public Queue<QueueContent>? GetQueue(Guid queueId)
         {
             if (queuesDict.TryGetValue(queueId, out var queue))
             {
@@ -58,20 +58,20 @@ namespace innerservice.Managers
             return queue;
         }
 
-        public void EnqueuePartialContent(PartialContentResponse partialContent)
+        public void EnqueuePartialContent(QueueContent partialContent)
         {
-            if (queuesDict.TryGetValue(partialContent.QueueGUID, out var queue))
+            if (queuesDict.TryGetValue(partialContent.QueueId, out var queue))
             {
                 lock (queue)
                 {
                     queue.Enqueue(partialContent);
-                    _logger.LogInformation("Enqueued content to queue: {QueueGUID}", partialContent.QueueGUID);
+                    _logger.LogInformation("Enqueued content to queue: {QueueId}", partialContent.QueueId);
                 }
             }
             else
             {
                 RegisterQueue(partialContent);
-                _logger.LogInformation("Queue created and content enqueued: {QueueGUID}", partialContent.QueueGUID);
+                _logger.LogInformation("Queue created and content enqueued: {QueueId}", partialContent.QueueId);
             }
         }
     }

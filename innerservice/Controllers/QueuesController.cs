@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using innerservice.Managers.Interfaces;
 using Microsoft.AspNetCore.Http;
-using Models;
+using Models.InnerService.Responses.Queues;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -82,7 +82,7 @@ namespace innerservice.Controllers
                 {
                     var partialContent = queue.Dequeue();
 
-                    finalContent.Append(partialContent.PartialContent);
+                    finalContent.Append(partialContent.Content);
                     fetchMore = partialContent.FetchMore;
                 }
             }
@@ -92,7 +92,7 @@ namespace innerservice.Controllers
                 _queuesManager.RemoveQueue(guid);
             }
 
-            return Ok(new FinalResponse()
+            return Ok(new QueueContent()
             {
                 Content = finalContent.ToString(),
                 FetchMore = fetchMore,

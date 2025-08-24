@@ -1,8 +1,8 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Models;
+namespace Models.OuterService.Responses;
 
-public class Response
+public class StreamResponse
 {
     [JsonPropertyName("content")]
     public string? Content { get; set; }

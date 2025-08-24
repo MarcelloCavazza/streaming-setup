@@ -1,3 +1,5 @@
+using Models.InnerService.Enums;
+
 namespace innerservice.Managers.Interfaces
 {
     public interface ITasksManager
@@ -6,8 +8,8 @@ namespace innerservice.Managers.Interfaces
         
         bool TryCancelTask(Guid id);
 
-        bool TryGetStatus(Guid id, out string status);
+        bool TryGetStatus(Guid id, out TaskStatusEnum status);
 
-        IEnumerable<(Guid Id, string Status)> GetAllTasks();
+        IEnumerable<(Guid Id, TaskStatusEnum Status)> GetAllTasks();
     }
 }

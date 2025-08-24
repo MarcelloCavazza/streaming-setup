@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Text;
 using System.Text.Json;
-using Models;
+using Models.OuterService.Responses;
 
 using outerservice.Extensions;
 
@@ -38,7 +38,7 @@ public class StreamController : ControllerBase
 
             _logger.LogInformation("Sending chunk: {Chunk}", chunk);
 
-            var json = JsonSerializer.Serialize(new Response()
+            var json = JsonSerializer.Serialize(new StreamResponse()
             {
                 Id = Guid.NewGuid(),
                 Content = chunk,

@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Text.Json.Serialization;
+using Models.InnerService.Enums;
 
-namespace Models;
+namespace Models.InnerService.Responses.Tasks;
 
-public class StatusResponse
+public class TaskStatusResponse
 {
-    
     [JsonPropertyName("status")]
-    public string Status { get; set; }
+    public TaskStatusEnum Status { get; set; }
 }

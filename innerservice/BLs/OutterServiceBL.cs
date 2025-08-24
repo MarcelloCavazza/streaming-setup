@@ -1,7 +1,8 @@
 using innerservice.BLs.Interfaces;
 using innerservice.Managers.Interfaces;
 using System.Text.Json;
-using Models;
+using Models.OuterService.Responses;
+using Models.InnerService.Responses.Queues;
 
 namespace innerservice.BLs
 {
@@ -52,16 +53,16 @@ namespace innerservice.BLs
                 {
                     taskToken.ThrowIfCancellationRequested();
                     var line = await reader.ReadLineAsync();
-                    var payload = JsonSerializer.Deserialize<Response>(line ?? "");
+                    var payload = JsonSerializer.Deserialize<StreamResponse>(line ?? "");
 
                     if (payload != null)
                     {
                         contents.Add(payload.Content ?? "");
 
-                        var partialContent = new PartialContentResponse()
+                        var partialContent = new QueueContent()
                         {
-                            QueueGUID = queueId,
-                            PartialContent = string.Join("\n", contents),
+                            QueueId = queueId,
+                            Content = string.Join("\n", contents),
                             FetchMore = payload.FetchMore
                         };
 

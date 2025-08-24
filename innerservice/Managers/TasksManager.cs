@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using innerservice.Managers.Interfaces;
 using Microsoft.Extensions.Logging;
+using Models.InnerService.Enums;
 
 namespace innerservice.Managers
 {
@@ -46,24 +47,24 @@ namespace innerservice.Managers
             return false;
         }
 
-        public bool TryGetStatus(Guid id, out string status)
+        public bool TryGetStatus(Guid id, out TaskStatusEnum status)
         {
             if (_tasks.TryGetValue(id, out var entry))
             {
-                if (entry.Task.IsCanceled) status = "Canceled";
-                else if (entry.Task.IsCompletedSuccessfully) status = "Completed";
-                else if (entry.Task.IsFaulted) status = "Faulted";
-                else status = "Running";
+                if (entry.Task.IsCanceled) status = TaskStatusEnum.Canceled;
+                else if (entry.Task.IsCompletedSuccessfully) status = TaskStatusEnum.Completed;
+                else if (entry.Task.IsFaulted) status = TaskStatusEnum.Faulted;
+                else status = TaskStatusEnum.Running;
                 _logger.LogInformation("Status for task {TaskId}: {Status}", id, status);
                 return true;
             }
 
-            status = "NotFound";
+            status = TaskStatusEnum.NotFound;
             _logger.LogWarning("Status requested for non-existent task: {TaskId}", id);
             return false;
         }
 
-        public IEnumerable<(Guid Id, string Status)> GetAllTasks()
+        public IEnumerable<(Guid Id, TaskStatusEnum Status)> GetAllTasks()
         {
             foreach (var kvp in _tasks)
             {

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using innerservice.Managers;
 using Models;
+using Models.InnerService.Responses.Tasks;
 using Microsoft.Extensions.Logging;
 using innerservice.Managers.Interfaces;
 
@@ -44,7 +45,7 @@ namespace innerservice.Controllers
 
             _tasksManager.TryGetStatus(guid, out var status);
             _logger.LogInformation("Status retrieved for task: {Id}", id);
-            return Ok(new StatusResponse()
+            return Ok(new TaskStatusResponse()
             {
                 Status = status
             });

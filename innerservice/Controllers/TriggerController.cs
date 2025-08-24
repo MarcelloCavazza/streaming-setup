@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using innerservice.BLs.Interfaces;
-using Models.InnerService;
+using Models.InnerService.Responses.Trigger;
 
 namespace innerservice.Controllers
 {

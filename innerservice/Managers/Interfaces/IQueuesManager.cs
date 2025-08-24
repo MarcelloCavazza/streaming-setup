@@ -1,4 +1,4 @@
-using Models;
+using Models.InnerService.Responses.Queues;
 
 namespace innerservice.Managers.Interfaces
 {
@@ -6,8 +6,8 @@ namespace innerservice.Managers.Interfaces
     {
         bool RemoveQueue(Guid key);
 
-        void EnqueuePartialContent(PartialContentResponse partialContent);
+        void EnqueuePartialContent(QueueContent partialContent);
 
-        Queue<PartialContentResponse>? GetQueue(Guid queueId);
+        Queue<QueueContent>? GetQueue(Guid queueId);
     }
 }
