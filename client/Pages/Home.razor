@@ -124,6 +124,10 @@ else
     {
         requestAgain = false;
         
+        CanStartRequest = true;
+
+        mongolHistory = string.Empty;
+        
         await Http.DeleteAsync($"{API_URL}/tasks/{queueId}");
 
         await RetrieveTaskStatusAsync();
