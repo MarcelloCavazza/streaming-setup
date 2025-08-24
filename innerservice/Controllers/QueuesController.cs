@@ -10,20 +10,20 @@ namespace innerservice.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class QueueController : ControllerBase
+    public class QueuesController : ControllerBase
     {
         private readonly IQueuesManager _queuesManager;
 
-        private readonly ILogger<QueueController> _logger;
+        private readonly ILogger<QueuesController> _logger;
 
-        public QueueController(IQueuesManager queuesManager, ILogger<QueueController> logger)
+        public QueuesController(IQueuesManager queuesManager, ILogger<QueuesController> logger)
         {
             _queuesManager = queuesManager;
             _logger = logger;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetQueue([FromQuery] string id)
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetQueue([FromRoute] string id)
         {
             await Task.Delay(1000);
 
